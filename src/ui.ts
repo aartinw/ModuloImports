@@ -1,4 +1,82 @@
-import { getPuntuacion, setPuntuacion, setEstadoJuego } from "./model";
+import {
+  reiniciarJuego,
+  getPuntuacion,
+  setPuntuacion,
+  estadoJuego,
+  setEstadoJuego,
+} from "./model";
+import {
+  generarNumeroAleatorio,
+  generarNumeroCarta,
+  obtenerPuntosCarta,
+  obtenerUrlCarta,
+  gestionarEstadoPartida,
+} from "./motor";
+
+export const terminarJuego = () => {
+  setEstadoJuego(true);
+  desactivarBotones();
+};
+
+export const reiniciarPartida = () => {
+  reiniciarJuego();
+  resetJuego();
+  actualizarPuntuacion();
+  activarBotones();
+};
+export const gestionarPartida = () => {
+  if (gestionarEstadoPartida() === "Ganar") {
+    mostrarMensaje("¡Lo has clavado! ¡Enhorabuena!");
+    mostrarBotonReiniciar(reiniciarPartida);
+    terminarJuego();
+  } else if (gestionarEstadoPartida() === "Perder") {
+    mostrarMensaje("¡Game Over! Has perdido.");
+    mostrarBotonReiniciar(reiniciarPartida);
+    terminarJuego();
+  }
+};
+
+export const plantarsePartida = () => {
+  if (gestionarEstadoPartida() === "Perder") return;
+
+  setEstadoJuego(true);
+  desactivarBotones();
+
+  const puntuacionActual = getPuntuacion();
+  if (puntuacionActual <= 4) {
+    mostrarMensaje("Has sido muy conservador");
+  } else if (puntuacionActual <= 5) {
+    mostrarMensaje("Te ha entrado el canguelo eh?");
+  } else if (puntuacionActual <= 6 || puntuacionActual < 7.5) {
+    mostrarMensaje("Casi casi...");
+  } else if (puntuacionActual === 7.5) {
+    mostrarMensaje("¡Lo has clavado! ¡Enhorabuena!");
+  }
+  mostrarBotonReiniciar(reiniciarPartida);
+};
+
+export const dameCarta = () => {
+  if (estadoJuego()) return;
+
+  const numeroAleatorio = generarNumeroAleatorio();
+  const carta = generarNumeroCarta(numeroAleatorio);
+  const urlCarta = obtenerUrlCarta(carta);
+  mostrarUrlCarta(urlCarta);
+
+  const puntosCarta = obtenerPuntosCarta(carta);
+  setPuntuacion(getPuntuacion() + puntosCarta);
+
+  actualizarPuntuacion();
+  gestionarPartida();
+};
+
+// const deshabilitarBotonDameCarta = (estaDeshabilitado: boolean) => {
+//   const botonDameCarta = document.getElementById('dameCarta');
+
+//   if (botonDameCarta && botonDameCarta instanceof HTMLButtonElement) {
+//     botonDameCarta.disabled = estaDeshabilitado;
+//   }
+// }
 
 export const actualizarPuntuacion = () => {
   const nuevosPuntos = document.getElementById("puntuacionActual");
@@ -87,4 +165,5 @@ export const resetJuego = () => {
   actualizarPuntuacion();
   mostrarMensaje("");
   activarBotones();
+  reiniciarJuego();
 };

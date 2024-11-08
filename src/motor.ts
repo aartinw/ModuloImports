@@ -1,80 +1,54 @@
-import {
-  getPuntuacion,
-  setPuntuacion,
-  estadoJuego,
-  setEstadoJuego,
-  generarNumeroAleatorio,
-  generarNumeroCarta,
-  obtenerUrlCarta,
-  obtenerPuntosCarta,
-  reiniciarJuego,
-} from "./model";
+import { partida } from "./model";
+export const generarNumeroAleatorio = () => Math.floor(Math.random() * 10) + 1;
+export const generarNumeroCarta = (numeroAleatorio: number) => {
+  if (numeroAleatorio > 7) {
+    return numeroAleatorio + 2;
+  }
 
-import {
-  actualizarPuntuacion,
-  mostrarMensaje,
-  mostrarUrlCarta,
-  desactivarBotones,
-  activarBotones,
-  resetJuego,
-  mostrarBotonReiniciar,
-} from "./ui";
-
-export const terminarJuego = () => {
-  setEstadoJuego(true);
-  desactivarBotones();
+  return numeroAleatorio;
 };
 
-export const reiniciarPartida = () => {
-  reiniciarJuego();
-  resetJuego();
-  actualizarPuntuacion();
-  activarBotones();
-};
-export const gestionarPartida = () => {
-  const puntuacionActual = getPuntuacion();
+export const gestionarEstadoPartida = () => {
+  if (partida.puntuacion === 7.5) {
+    partida.estadoPartida = "Ganar";
+  } else if (partida.puntuacion > 7.5) {
+    partida.estadoPartida = "Perder";
+  }
 
-  if (puntuacionActual === 7.5) {
-    mostrarMensaje("¡Lo has clavado! ¡Enhorabuena!");
-    mostrarBotonReiniciar(reiniciarPartida);
-    terminarJuego();
-  } else if (puntuacionActual > 7.5) {
-    mostrarMensaje("¡Game Over! Has perdido.");
-    mostrarBotonReiniciar(reiniciarPartida);
-    terminarJuego();
+  return partida.estadoPartida;
+};
+
+export const obtenerUrlCarta = (carta: number) => {
+  switch (carta) {
+    case 1:
+      return "imgs/1_as-copas.jpg";
+    case 2:
+      return "imgs/2_dos-copas.jpg";
+    case 3:
+      return "imgs/3_tres-copas.jpg";
+    case 4:
+      return "imgs/4_cuatro-copas.jpg";
+    case 5:
+      return "imgs/5_cinco-copas.jpg";
+    case 6:
+      return "imgs/6_seis-copas.jpg";
+    case 7:
+      return "imgs/7_siete-copas.jpg";
+    case 10:
+      return "imgs/10_sota-copas.jpg";
+    case 11:
+      return "imgs/11_caballo-copas.jpg";
+    case 12:
+      return "imgs/12_rey-copas.jpg";
+    default:
+      return "";
   }
 };
 
-export const plantarsePartida = () => {
-  if (estadoJuego()) return;
-
-  setEstadoJuego(true);
-  desactivarBotones();
-
-  const puntuacionActual = getPuntuacion();
-  if (puntuacionActual < 4) {
-    mostrarMensaje("Has sido muy conservador");
-  } else if (puntuacionActual === 5) {
-    mostrarMensaje("Te ha entrado el canguelo eh?");
-  } else if (puntuacionActual >= 6 && puntuacionActual < 7.5) {
-    mostrarMensaje("Casi casi...");
-  } else if (puntuacionActual === 7.5) {
-    mostrarMensaje("¡Lo has clavado! ¡Enhorabuena!");
+export const obtenerPuntosCarta = (numeroCarta: number) => {
+  if (numeroCarta > 7) {
+    return 0.5;
   }
-  mostrarBotonReiniciar(reiniciarPartida);
-};
 
-export const dameCarta = () => {
-  if (estadoJuego()) return;
-
-  const numeroAleatorio = generarNumeroAleatorio();
-  const carta = generarNumeroCarta(numeroAleatorio);
-  const urlCarta = obtenerUrlCarta(carta);
-  mostrarUrlCarta(urlCarta);
-
-  const puntosCarta = obtenerPuntosCarta(carta);
-  setPuntuacion(getPuntuacion() + puntosCarta);
-
-  actualizarPuntuacion();
-  gestionarPartida();
+  return numeroCarta;
 };
